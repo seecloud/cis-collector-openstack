@@ -1,5 +1,5 @@
-OpenStack Resource Collector Cloud Intelligence System (CIS)
-============================================================
+OpenStack Resources Collector For CIS
+=====================================
 
 
 .. image:: https://coveralls.io/repos/github/seecloud/cis-collector-openstack/badge.svg?branch=master
