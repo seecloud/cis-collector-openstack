@@ -1,0 +1,54 @@
+{
+	"delay": 5,
+	"components": {
+
+		"keystone": [
+			"projects",
+			"domains",
+			"users",
+			"roles",
+			"services"
+		],
+		"nova": [
+			"servers",
+			"flavors",
+			"keypairs",
+			"hypervisors",
+			"quotas",
+			"images"
+		],
+		"neutron": [
+			"networks",
+			"routers",
+			"subnets",
+			"security_groups",
+			"security_group_rules",
+			"floatingips",
+			"quotas",
+			"flavors"
+		],
+		"glance": [
+			"images"
+		],
+		"cinder": [
+			"volumes",
+			"backups",
+			"volume_snapshots"
+		],
+        "heat": [
+            "stacks"
+        ]
+	},
+    "ignore_keys": [
+      "vcpus",
+      "free_ram_mb",
+      "hypervisor_version",
+      "memory_mb",
+      "disk_available_least",
+      "free_disk_gb",
+      "hypervisor_type",
+      "cpu_info",
+      "local_gb",
+      "local_gb_used"
+    ]
+}
