@@ -9,7 +9,7 @@ def get_env_var_as_bool(name, default):
     value = os.environ.get(name, '')
     return _boolean_states.get(value.lower(), default)
 
-TEMPORARY_BACKEND = "172.17.0.1"
+CIS_SERVER = os.environ.get('CIS_SERVER', None)
 DNS = os.environ.get('DNS', '8.8.8.8')
 PUBLIC_TEST_IP = os.environ.get('PUBLIC_TEST_IP', '8.8.8.8')
 
@@ -155,14 +155,6 @@ DEV_LOGGING_CONFIG = {
 # no console ouptput
 PROD_LOGGING = DEV_LOGGING_CONFIG.copy()
 PROD_LOGGING.update({
-    'loggers': {
-        'oscollector': {
-            'level': 'INFO',
-            'handlers': [],
-            'propagate': 'no'
-        }
-    },
-
     'root': {
         'level': 'INFO',
         'handlers': ['info_file_handler', 'error_file_handler']

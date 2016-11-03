@@ -74,7 +74,7 @@ class OSCollector:
     def init_session(self):
         credentials = envutils.get_creds_from_env_vars()
         self.osclient = Common(**credentials)
-        self.cisclient = CISClient()
+        self.cisclient = CISClient(settings.CIS_SERVER)
 
     def validate_configuration(self):
         os_services = [component.name for component in self.osclient.keystone.services.list()]

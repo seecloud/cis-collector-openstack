@@ -16,7 +16,11 @@ class CISClient:
        - caching retrieved component state
 
     """
-    def __init__(self, session=None):
+    def __init__(self, server_address, session=None):
+        if not server_address:
+            logger.error('No cis-server address specified. '
+                         'Only in-memory storage will be used')
+        self.server_address = server_address
         self.session = session
         self.cache = defaultdict(dict)
 
@@ -68,7 +72,7 @@ class CISClient:
         # Todo: replace with method for CIS API when last will be available
 
         headers = {'Content-Type': 'application/json', 'charset': 'utf-8'}
-        api_endpoint = "http://{0}:5000/api".format(settings.TEMPORARY_BACKEND)
+        api_endpoint = "http://{0}:5000/api".format(settings.CIS_SERVER)
 
         try:
             requests.post('{0}/{1}/{2}'.format(api_endpoint, component, service),
