@@ -73,16 +73,16 @@ DEFAULT_CONFIG = {
         ]
     },
     "ignore_keys": [
-      "vcpus",
-      "free_ram_mb",
-      "hypervisor_version",
-      "memory_mb",
-      "disk_available_least",
-      "free_disk_gb",
-      "hypervisor_type",
-      "cpu_info",
-      "local_gb",
-      "local_gb_used"
+        "vcpus",
+        "free_ram_mb",
+        "hypervisor_version",
+        "memory_mb",
+        "disk_available_least",
+        "free_disk_gb",
+        "hypervisor_type",
+        "cpu_info",
+        "local_gb",
+        "local_gb_used"
     ]
 }
 

@@ -1,6 +1,7 @@
-import logging
 import json
-from jsonschema import validate, ValidationError
+import logging
+
+import jsonschema
 
 logger = logging.getLogger(__name__)
 
@@ -14,7 +15,7 @@ def var_as_bool(var=None, default=False):
     return var if isinstance(var, bool) else _boolean_states.get(var, default)
 
 
-ELASTICSEARCH_TYPE_MAPPING = {
+TYPE_MAPPING = {
     "integer": lambda *x: -1 if len(x) == 0 else int(x[0]),
     "string": str,
     "object": dict,
@@ -54,12 +55,14 @@ class ResourceFactory:
                 logger.info('Found schemas for {0} component'
                             .format(component))
                 logger.info('List of available resource schemas: {0}'
-                            .format(", ".join(cls.supported_schemas[component].keys())))
+                            .format(", ".join(
+                                    cls.supported_schemas[component].keys())))
 
             except (IOError, ValueError):
-                logger.error('Error while reading resource schemas for {0} component'
-                             .format(component),
-                             exc_info=True)
+                logger.error(
+                    'Error while reading resource schemas for {0} component'
+                    .format(component),
+                    exc_info=True)
 
     @classmethod
     def create_resource(cls, resource_raw, component, service):
@@ -78,16 +81,19 @@ class ResourceFactory:
             resource = resource_raw
 
         if cls.supported_schemas[component][service].get('root', None):
-            resource = resource.get(cls.supported_schemas[component][service]['root'])
+            resource = resource\
+                .get(cls.supported_schemas[component][service]['root'])
         root_id = cls.supported_schemas[component][service]['root_id']
         resource_id = resource.pop(root_id)
-        resource_body = ResourceFactory._serialize_resource(resource,
-                                                            cls.supported_schemas[component][service])
+        resource_body = ResourceFactory.\
+            _serialize_resource(resource,
+                                cls.supported_schemas[component][service])
 
         try:
-            validate(resource_body, cls.supported_schemas[component][service])
+            jsonschema.validate(resource_body,
+                                cls.supported_schemas[component][service])
             return {str(resource_id): resource_body}
-        except ValidationError:
+        except jsonschema.ValidationError:
             logger.error("{0}::{1} resource with id {2} has wrong schema"
                          .format(component, service, resource_id),
                          exc_info=True)
@@ -104,16 +110,18 @@ class ResourceFactory:
         if schema.get('properties', None):
             for field, value in schema.get('properties', {}).iteritems():
                 if value['type'] == 'object':
-                    resource[field] = ResourceFactory._serialize_resource(resource_raw[field],
-                                                                          value)
+                    resource[field] = ResourceFactory.\
+                        _serialize_resource(resource_raw[field], value)
                 elif value['type'] == 'array':
                     resource[field] = []
                     for item in resource_raw[field]:
-                        temp = ResourceFactory._serialize_resource(item, value.get('items', {}))
+                        temp = ResourceFactory.\
+                            _serialize_resource(item, value.get('items', {}))
                         if temp:
                             resource[field].append(temp)
                 else:
-                    resource[field] = ResourceFactory._cust_object(resource_raw, field, value['type'])
+                    resource[field] = ResourceFactory.\
+                        _cust_object(resource_raw, field, value['type'])
         else:
             resource = resource_raw
         return resource
@@ -128,7 +136,7 @@ class ResourceFactory:
         :return: casted with proper type resource[field]
         """
         if resource.get(field, None) is not None:
-            proper_field = ELASTICSEARCH_TYPE_MAPPING[schema_type](resource[field])
+            proper_field = TYPE_MAPPING[schema_type](resource[field])
         else:
-            proper_field = ELASTICSEARCH_TYPE_MAPPING[schema_type]()
+            proper_field = TYPE_MAPPING[schema_type]()
         return proper_field

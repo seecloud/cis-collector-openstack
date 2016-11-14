@@ -1,7 +1,8 @@
+import collections
 import logging
-from settings import SERVICE_INVALID_STATE
-from collections import defaultdict
-from resource_factory import ResourceFactory
+
+import resource_factory
+import settings
 
 logger = logging.getLogger(__name__)
 
@@ -11,7 +12,8 @@ class ServiceCollector:
     """
 
     def __init__(self):
-        logger.warning("Use 'collect(service, client) method for collecting data")
+        logger.warning(
+            "Use 'collect(service, client) method for collecting data")
 
     @classmethod
     def __collect_keystone(cls, client, services):
@@ -22,20 +24,23 @@ class ServiceCollector:
         """
 
         kc = client.keystone
-        keystone_state = defaultdict(dict)
+        keystone_state = collections.defaultdict(dict)
 
         for service in services:
             try:
                 service_client = kc.__dict__[service]
                 for item in service_client.list():
                     keystone_state[service].update(
-                        ResourceFactory.create_resource(item, 'keystone', service))
+                        resource_factory.ResourceFactory
+                        .create_resource(item, 'keystone', service))
 
             except KeyError:
-                logger.warning(" ".join(["There is no {0} service in keystone.".format(service),
-                                         "It will be removed from collector configuration"]),
+                logger.warning(" ".join(["There is no {0} service in keystone."
+                                        .format(service),
+                                         "It will be removed",
+                                         "from collector configuration"]),
                                exc_info=True)
-                keystone_state[service] = SERVICE_INVALID_STATE
+                keystone_state[service] = settings.SERVICE_INVALID_STATE
 
         return keystone_state
 
@@ -48,27 +53,32 @@ class ServiceCollector:
         """
 
         nc = client.nova
-        nova_state = defaultdict(dict)
+        nova_state = collections.defaultdict(dict)
 
         for service in services:
             if service in ['flavors', 'hypervisors', 'images', 'keypairs']:
                 for item in nc.__dict__[service].list():
                     nova_state[service].update(
-                        ResourceFactory.create_resource(item, 'nova', service))
+                        resource_factory.ResourceFactory
+                        .create_resource(item, 'nova', service))
 
             elif service == 'servers':
                 for item in nc.servers.list(search_opts={'all_tenants': 1}):
                     nova_state[service].update(
-                        ResourceFactory.create_resource(item, 'nova', service))
+                        resource_factory.ResourceFactory
+                        .create_resource(item, 'nova', service))
 
             elif service == 'quotas':
                 item = nc.quotas.get(None)
                 nova_state[service].update(
-                        ResourceFactory.create_resource(item, 'nova', service))
+                    resource_factory.ResourceFactory
+                    .create_resource(item, 'nova', service))
 
             else:
-                logger.warning(" ".join(["There is no {0} service in nova".format(service),
-                                         "It will be removed from collector configuration"]),
+                logger.warning(" ".join(["There is no {0} service in nova"
+                                        .format(service),
+                                         "It will be removed",
+                                         "from collector configuration"]),
                                exc_info=True)
 
         return nova_state
@@ -82,7 +92,7 @@ class ServiceCollector:
         """
 
         nc = client.neutron
-        neutron_state = defaultdict(dict)
+        neutron_state = collections.defaultdict(dict)
 
         neutron_services = {
             'networks': nc.list_networks,
@@ -102,16 +112,19 @@ class ServiceCollector:
                                                 lambda *args: None)()
 
             if not service_data:
-                logger.warning(" ".join(["There is no {0} service in neutron.".format(service),
-                                         "It will be removed from collector configuration"]),
+                logger.warning(" ".join(["There is no {0} service in neutron."
+                                        .format(service),
+                                         "It will be removed",
+                                         "from collector configuration"]),
                                exc_info=True)
-                neutron_state[service] = SERVICE_INVALID_STATE
+                neutron_state[service] = settings.SERVICE_INVALID_STATE
             else:
 
                 for neutron_resource, values in service_data.items():
                     for item in values:
                         neutron_state[neutron_resource].update(
-                                        ResourceFactory.create_resource(item, 'neutron', neutron_resource))
+                            resource_factory.ResourceFactory
+                            .create_resource(item, 'neutron', neutron_resource))
 
         return neutron_state
 
@@ -124,19 +137,22 @@ class ServiceCollector:
         """
 
         gc = client.glance
-        glance_state = defaultdict(dict)
+        glance_state = collections.defaultdict(dict)
 
         for service in services:
             try:
                 service_client = gc.__dict__[service]
                 for item in service_client.list():
                     glance_state[service].update(
-                        ResourceFactory.create_resource(item, 'glance', service))
+                        resource_factory.ResourceFactory
+                        .create_resource(item, 'glance', service))
             except KeyError:
-                logger.warning(" ".join(["There is no {0} service in glance.".format(service),
-                                         "It will be removed from collector configuration"]),
+                logger.warning(" ".join(["There is no {0} service in glance."
+                                        .format(service),
+                                         "It will be removed",
+                                         "from collector configuration"]),
                                exc_info=True)
-                glance_state[service] = SERVICE_INVALID_STATE
+                glance_state[service] = settings.SERVICE_INVALID_STATE
 
         return glance_state
 
@@ -149,21 +165,25 @@ class ServiceCollector:
         """
 
         cc = client.cinder
-        cinder_state = defaultdict(dict)
+        cinder_state = collections.defaultdict(dict)
 
         # Todo: find cinder backups structure ?
 
         for service in services:
             try:
                 service_client = cc.__dict__[service]
-                for item in service_client.list(search_opts={'all_tenants': 1}):
+                for item in service_client\
+                        .list(search_opts={'all_tenants': 1}):
                     cinder_state[service].update(
-                        ResourceFactory.create_resource(item, 'cinder', service))
+                        resource_factory.ResourceFactory
+                        .create_resource(item, 'cinder', service))
             except KeyError:
-                logger.warning(" ".join(["There is no {0} service in cinder.".format(service),
-                                        "It will be removed from collector configuration"]),
+                logger.warning(" ".join(["There is no {0} service in cinder."
+                                        .format(service),
+                                         "It will be removed",
+                                         "from collector configuration"]),
                                exc_info=True)
-                cinder_state[service] = SERVICE_INVALID_STATE
+                cinder_state[service] = settings.SERVICE_INVALID_STATE
         return cinder_state
 
     @classmethod
@@ -175,7 +195,7 @@ class ServiceCollector:
         """
 
         hc = client.heat
-        heat_state = defaultdict(dict)
+        heat_state = collections.defaultdict(dict)
 
         for service in services:
             try:
@@ -184,10 +204,12 @@ class ServiceCollector:
                     data = item.__dict__.get('_info')
                     heat_state[service][str(data.pop('id'))] = data
             except KeyError:
-                logger.warning(" ".join(["There is no {0} service in heat.".format(service),
-                                         "It will be removed from collector configuration"]),
+                logger.warning(" ".join(["There is no {0} service in heat."
+                                        .format(service),
+                                         "It will be removed",
+                                         "from collector configuration"]),
                                exc_info=True)
-                heat_state[service] = SERVICE_INVALID_STATE
+                heat_state[service] = settings.SERVICE_INVALID_STATE
 
         return heat_state
 

@@ -1,4 +1,4 @@
-#    Copyright 2014 Mirantis, Inc.
+#    Copyright 2016 Mirantis, Inc.
 #
 #    Licensed under the Apache License, Version 2.0 (the "License"); you may
 #    not use this file except in compliance with the License. You may obtain
@@ -13,7 +13,7 @@
 #    under the License.
 
 import logging
-import six
+import six # noqa
 import sys
 import time
 from cinderclient.client import Client as CinderClient
@@ -155,7 +155,8 @@ class Common(object):
                 logger.warning(err.format(i + 1, exc))
                 time.sleep(5)
         if exc_type and exc_traceback and exc_value:
-            logger.error('Unable to establish connection with keystone. Exit...',
-                         exc_info=True)
+            logger.error(
+                'Unable to establish connection with keystone. Exit...',
+                exc_info=True)
             raise
         raise RuntimeError()

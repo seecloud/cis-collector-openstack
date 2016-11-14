@@ -3,7 +3,7 @@ def main():
 
     Configure logger and run collector instance forever
     """
-    import log_cfg
+    import log_cfg # noqa
     import logging
     from oscollector import OSCollector
     logger = logging.getLogger(__name__)

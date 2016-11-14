@@ -1,6 +1,7 @@
 import logging
 import logging.config
-from settings import DEV_LOGGING_CONFIG as LOGGING_CONFIG
+
+import settings
 
 
 def setup_logger():
@@ -9,7 +10,7 @@ def setup_logger():
     """
 
     try:
-        logging.config.dictConfig(LOGGING_CONFIG)
+        logging.config.dictConfig(settings.DEV_LOGGING_CONFIG)
         configured_logging = True
         logging.info('Logging configured with application configuration')
     except SyntaxError:
