@@ -13,3 +13,4 @@ ddt>=1.0.1
 mock>=2.0
 
 testtools>=1.4.0
+flake8>=3.0.4

@@ -42,6 +42,7 @@ RUN set -ex \
 		libc-dev \
 		libffi-dev \
 		linux-headers \
+                g++ \
 		make \
 		musl-dev \
 		ncurses-dev \
@@ -93,7 +94,7 @@ RUN set -ex \
 	&& apk del .build-deps \
 	&& rm -rf /usr/src/python ~/.cache
 
-ADD oscollector /opt/cis-collectors/oscollector
-WORKDIR /opt/cis-collectors/oscollector
+ADD cis-server /opt/cis-server
+WORKDIR /opt/cis-server
 ENTRYPOINT ["python"]
 CMD ["main.py"]
