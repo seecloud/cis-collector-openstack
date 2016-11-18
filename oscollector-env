@@ -1,0 +1,11 @@
+OS_USERNAME=admin
+OS_PASSWORD=msa
+OS_TENANT_NAME=admin
+OS_CONTROLLER_IP=172.18.128.104
+OS_USER_DOMAIN_ID=default
+OS_PROJECT_DOMAIN_ID=default
+OS_REGION_NAME=default
+
+# CIS_SERVER address
+# This value is used for running docker with --link option
+CIS_SERVER=cis-server
