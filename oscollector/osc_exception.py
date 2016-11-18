@@ -13,18 +13,17 @@
 #    under the License.
 
 
-def main():
-    """Main runner
-
-    Configure logger and run collector instance forever
-    """
-    import logging
-
-    import log_cfg  # noqa
-
-    logger = logging.getLogger(__name__)
-    logger.info('Create collector')
+class CollectorError(Exception):
+    pass
 
 
-if __name__ == '__main__':
-    main()
+class ResourceFactoryError(Exception):
+    pass
+
+
+class ServiceCollectorError(Exception):
+    pass
+
+
+class ValidationError(Exception):
+    pass
