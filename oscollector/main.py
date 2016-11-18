@@ -22,8 +22,14 @@ def main():
 
     import log_cfg  # noqa
 
+    import oscollector
+
     logger = logging.getLogger(__name__)
     logger.info('Create collector')
+    osc = oscollector.OSCollector()
+
+    while 1:
+        osc.collect()
 
 
 if __name__ == '__main__':
